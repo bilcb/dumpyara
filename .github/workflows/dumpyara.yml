@@ -1,0 +1,33 @@
+name: dumpyara
+
+on:
+  workflow_dispatch:
+    inputs:
+      urls:
+        description: 'URLs'
+        required: true
+      github_token:
+        description: 'GitHub Token'
+        required: true
+
+jobs:
+  dumpyara:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@master
+        with:
+          root-reserve-mb: 512
+          swap-size-mb: 1024
+          overprovision-lvm: true
+
+      - name: Set up Git
+        uses: actions/checkout@v4
+
+      - name: Set up environment
+        run: bash setup.sh
+
+      - name: Run dumpyara
+        run: |
+          bash dumpyara.sh '${{ inputs.urls }}' '${{ inputs.github_token }}'
